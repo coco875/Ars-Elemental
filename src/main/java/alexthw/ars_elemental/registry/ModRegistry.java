@@ -26,11 +26,11 @@ import java.util.Objects;
 import static alexthw.ars_elemental.ArsElemental.MODID;
 import static alexthw.ars_elemental.ArsElemental.prefix;
 import static alexthw.ars_elemental.registry.ModEntities.ENTITIES;
-import static alexthw.ars_elemental.registry.ModEntities.TILES;
 import static alexthw.ars_elemental.registry.ModItems.BLOCKS;
 import static alexthw.ars_elemental.registry.ModItems.ITEMS;
 import static alexthw.ars_elemental.registry.ModPotions.EFFECTS;
 import static alexthw.ars_elemental.registry.ModPotions.POTIONS;
+import static alexthw.ars_elemental.registry.ModTiles.TILES;
 import static alexthw.ars_elemental.world.ModFeatures.FEATURES;
 
 public class ModRegistry {
@@ -68,9 +68,6 @@ public class ModRegistry {
         if (event.getRegistryKey().equals(ForgeRegistries.Keys.ENTITY_TYPES)) {
             IForgeRegistry<EntityType<?>> registry = Objects.requireNonNull(event.getForgeRegistry());
             ModEntities.registerEntities(registry);
-        } else if (event.getRegistryKey().equals(ForgeRegistries.Keys.BLOCK_ENTITY_TYPES)) {
-            IForgeRegistry<BlockEntityType<?>> registry = Objects.requireNonNull(event.getForgeRegistry());
-            ModEntities.registerTiles(registry);
         }
     }
 
