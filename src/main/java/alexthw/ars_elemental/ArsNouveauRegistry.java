@@ -14,6 +14,7 @@ import alexthw.ars_elemental.common.rituals.SquirrelRitual;
 import alexthw.ars_elemental.common.rituals.TeslaRitual;
 import alexthw.ars_elemental.registry.ModEntities;
 import alexthw.ars_elemental.registry.ModItems;
+import alexthw.ars_elemental.registry.ModRegistry;
 import com.hollingsworth.arsnouveau.api.ArsNouveauAPI;
 import com.hollingsworth.arsnouveau.api.perk.ArmorPerkHolder;
 import com.hollingsworth.arsnouveau.api.perk.PerkSlot;
@@ -139,10 +140,11 @@ public class ArsNouveauRegistry {
         EffectLaunch.INSTANCE.compatibleAugments.add(AugmentDurationDown.INSTANCE);
         EffectGravity.INSTANCE.compatibleAugments.add(AugmentSensitive.INSTANCE);
         EffectWindshear.INSTANCE.compatibleAugments.add(AugmentFortune.INSTANCE);
-        EffectCrush.INSTANCE.compatibleAugments.add(AugmentSensitive.INSTANCE);
 
         ArsNouveauRegistry.addLights();
         ArsNouveauRegistry.addPerkSlots();
+        ArsNouveauAPI.getInstance().getEnchantingRecipeTypes().add(ModRegistry.NETHERITE_UP.get());
+
     }
 
     public static void addSchool(AbstractSpellPart part, SpellSchool school) {
@@ -217,4 +219,5 @@ public class ArsNouveauRegistry {
         });
 
     }
+
 }

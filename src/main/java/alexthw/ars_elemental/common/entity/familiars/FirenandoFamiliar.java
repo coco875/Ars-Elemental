@@ -31,7 +31,7 @@ import software.bernie.ars_nouveau.geckolib3.core.manager.AnimationData;
 
 import static alexthw.ars_elemental.ArsElemental.prefix;
 
-public class FirenandoFamiliar extends FamiliarEntity implements ISpellCastListener, IVariantColorProvider<FirenandoFamiliar> {
+public class FirenandoFamiliar extends FamiliarEntity implements ISpellCastListener, IVariantColorProvider<FamiliarEntity> {
     public FirenandoFamiliar(EntityType<? extends PathfinderMob> entityType, Level level) {
         super(entityType, level);
     }
@@ -92,7 +92,7 @@ public class FirenandoFamiliar extends FamiliarEntity implements ISpellCastListe
 
     @Override
     public PlayState walkPredicate(AnimationEvent event) {
-        event.getController().setAnimation(new AnimationBuilder().addAnimation("idle", true));
+        event.getController().setAnimation(new AnimationBuilder().addAnimation("idle"));
         return PlayState.CONTINUE;
     }
 
@@ -101,12 +101,18 @@ public class FirenandoFamiliar extends FamiliarEntity implements ISpellCastListe
         return PlayState.CONTINUE;
     }
 
-    public String getColor(FirenandoFamiliar firenandoFamiliar) {
+    @Override
+    public void setColor(String color, FamiliarEntity object) {
+        super.setColor(color);
+    }
+
+    @Override
+    public String getColor(FamiliarEntity firenandoFamiliar) {
         return this.entityData.get(COLOR);
     }
 
     @Override
-    public ResourceLocation getTexture(FirenandoFamiliar entity) {
+    public ResourceLocation getTexture(FamiliarEntity entity) {
         return prefix("textures/entity/firenando_" + (getColor().isEmpty() ? Variants.MAGMA.toString() : getColor()) + ".png");
     }
 
