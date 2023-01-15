@@ -118,11 +118,6 @@ repositories {
         name = "Progwml6 maven"
         url = "https://dvs1.progwml6.com/files/maven/"
     }
-    maven {
-        // location of a maven mirror for JEI files, as a fallback
-        name = "ModMaven"
-        url = "https://modmaven.k-4u.nl"
-    }
 
     maven {
         url "https://maven.blamejared.com"
@@ -134,6 +129,7 @@ repositories {
         }
     }
 
+    maven { url 'https://jitpack.io' }
 
     maven { url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
 
@@ -153,7 +149,7 @@ dependencies {
 
     implementation fg.deobf("top.theillusivec4.curios:curios-forge:${mc_version}-${curio_version}")
 
-    compileOnly fg.deobf("vazkii.botania:Botania:1.18.2-430")
+    /*implementation*/ compileOnly fg.deobf("vazkii.botania:Botania:1.19.2-437-FORGE-SNAPSHOT")
     implementation fg.deobf("vazkii.patchouli:Patchouli:${mc_version}-77")
 
     compileOnly fg.deobf("curse.maven:tmg-560595:3706717")
@@ -163,8 +159,8 @@ dependencies {
     runtimeOnly fg.deobf("curse.maven:instrumentum-580179:4086496")
     //runtimeOnly fg.deobf("curse.maven:omega-597007:3819746")
 
+    annotationProcessor("com.github.LlamaLad7:MixinExtras:0.1.1")
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
-
 
 }
 

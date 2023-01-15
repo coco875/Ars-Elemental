@@ -26,6 +26,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,7 +34,8 @@ import top.theillusivec4.curios.api.CuriosApi;
 
 import static alexthw.ars_elemental.ArsElemental.MODID;
 import static alexthw.ars_elemental.ArsElemental.prefix;
-import static alexthw.ars_elemental.registry.ModEntities.*;
+import static alexthw.ars_elemental.registry.ModEntities.FIRENANDO_FAMILIAR;
+import static alexthw.ars_elemental.registry.ModEntities.SIREN_FAMILIAR;
 
 public class AETagsProvider {
 
@@ -42,6 +44,7 @@ public class AETagsProvider {
         public static final TagKey<Item> CURIO_BANGLE = ItemTags.create(new ResourceLocation(CuriosApi.MODID, "bangle"));
         public static final TagKey<Item> SUMMON_SHARDS = ItemTags.create(new ResourceLocation(ArsNouveau.MODID, "magic_shards"));
         public static final TagKey<Item> SPELLBOOK = ItemTags.create(new ResourceLocation(ArsNouveau.MODID, "spellbook"));
+        public static final TagKey<Item> PRISM_LENS = ItemTags.create(new ResourceLocation(ArsNouveau.MODID, "spell_prism_lens"));
 
         public AEItemTagsProvider(DataGenerator gen, BlockTagsProvider blockTagsProvider, @Nullable ExistingFileHelper existingFileHelper) {
             super(gen, blockTagsProvider, ArsElemental.MODID, existingFileHelper);
@@ -49,12 +52,13 @@ public class AETagsProvider {
 
         @Override
         protected void addTags() {
-            tag(SPELLBOOK).add(ItemsRegistry.NOVICE_SPELLBOOK.get(), ItemsRegistry.APPRENTICE_SPELLBOOK.get(), ItemsRegistry.ARCHMAGE_SPELLBOOK.get());
+            tag(SPELLBOOK).add(ItemsRegistry.NOVICE_SPELLBOOK.get(), ItemsRegistry.APPRENTICE_SPELLBOOK.get(), ItemsRegistry.ARCHMAGE_SPELLBOOK.get(), ItemsRegistry.CREATIVE_SPELLBOOK.get());
             tag(ModRegistry.SOULBOUND_ABLE).add(Items.WRITABLE_BOOK, Items.WRITTEN_BOOK);
             tag(CURIO_SPELL_FOCUS).add(ModItems.AIR_FOCUS.get(), ModItems.FIRE_FOCUS.get(), ModItems.EARTH_FOCUS.get(), ModItems.NECRO_FOCUS.get(), ModItems.WATER_FOCUS.get(), ModItems.LESSER_AIR_FOCUS.get(), ModItems.LESSER_FIRE_FOCUS.get(), ModItems.LESSER_EARTH_FOCUS.get(), ModItems.LESSER_WATER_FOCUS.get());
             tag(CURIO_BANGLE).add(ModItems.AIR_BANGLE.get(), ModItems.FIRE_BANGLE.get(), ModItems.EARTH_BANGLE.get(), ModItems.WATER_BANGLE.get(), ModItems.ENCHANTER_BANGLE.get());
             tag(SUMMON_SHARDS).add(ModItems.SIREN_SHARDS.get(), ItemsRegistry.DRYGMY_SHARD.get(), ItemsRegistry.STARBUNCLE_SHARD.get(), ItemsRegistry.WIXIE_SHARD.get(), ItemsRegistry.WHIRLISPRIG_SHARDS.get());
-            tag(ModRegistry.CURIO_BAGGABLE).add(ItemsRegistry.ALCHEMISTS_CROWN.get(), ItemsRegistry.WORN_NOTEBOOK.get(), ItemsRegistry.DOMINION_ROD.get(), ItemsRegistry.DOWSING_ROD.get(), ItemsRegistry.JAR_OF_LIGHT.get(), ItemsRegistry.VOID_JAR.get(), ItemsRegistry.RUNIC_CHALK.get(), ItemsRegistry.WARP_SCROLL.get(), ItemsRegistry.SPELL_PARCHMENT.get()).addTag(SUMMON_SHARDS);
+            tag(PRISM_LENS).add(ModItems.ARC_LENS.get(), ModItems.HOMING_LENS.get(), ModItems.RGB_LENS.get());
+            tag(ModRegistry.CURIO_BAGGABLE).add(ItemsRegistry.ALCHEMISTS_CROWN.get(), ItemsRegistry.WORN_NOTEBOOK.get(), ItemsRegistry.DOMINION_ROD.get(), ItemsRegistry.DOWSING_ROD.get(), ItemsRegistry.JAR_OF_LIGHT.get(), ItemsRegistry.VOID_JAR.get(), ItemsRegistry.RUNIC_CHALK.get(), ItemsRegistry.WARP_SCROLL.get(), ItemsRegistry.SPELL_PARCHMENT.get()).addTag(SUMMON_SHARDS).addTag(PRISM_LENS);
             this.copy(BlockTags.SAPLINGS, ItemTags.SAPLINGS);
             this.copy(BlockTags.LEAVES, ItemTags.LEAVES);
             this.copy(BlockTags.LOGS, ItemTags.LOGS);
@@ -83,8 +87,8 @@ public class AETagsProvider {
 
         @Override
         protected void addTags() {
-            addPickMineable(1, ModItems.UPSTREAM_BLOCK.get());
-            addPickMineable(0, ModItems.AIR_TURRET.get(), ModItems.FIRE_TURRET.get(), ModItems.EARTH_TURRET.get(), ModItems.WATER_TURRET.get());
+            addPickMineable(1, ModItems.WATER_UPSTREAM_BLOCK.get(), ModItems.AIR_UPSTREAM_BLOCK.get(), ModItems.LAVA_UPSTREAM_BLOCK.get());
+            addPickMineable(0, ModItems.SPELL_MIRROR.get(), ModItems.AIR_TURRET.get(), ModItems.FIRE_TURRET.get(), ModItems.EARTH_TURRET.get(), ModItems.WATER_TURRET.get());
             logsTag(ModItems.FLASHING_ARCHWOOD_LOG.get(),
                     ModItems.FLASHING_ARCHWOOD.get(),
                     ModItems.FLASHING_ARCHWOOD_STRIPPED.get(),
@@ -92,6 +96,7 @@ public class AETagsProvider {
             );
             tag(BlockTags.LEAVES).add(ModItems.FLASHING_LEAVES.get());
             tag(ARCHWOOD_LEAVES).add(ModItems.FLASHING_LEAVES.get());
+            tag(BlockTags.MINEABLE_WITH_HOE).add(ModItems.FLASHING_LEAVES.get());
             tag(BlockTags.SAPLINGS).add(ModItems.FLASHING_SAPLING.get());
             tag(BlockTagProvider.MAGIC_SAPLINGS).add(ModItems.FLASHING_SAPLING.get());
 
@@ -107,9 +112,10 @@ public class AETagsProvider {
             for (Block block : blocks) {
                 tag(BlockTags.MINEABLE_WITH_PICKAXE).add(block);
                 switch (level) {
-                    case (1) -> tag(BlockTags.NEEDS_STONE_TOOL).add(block);
-                    case (2) -> tag(BlockTags.NEEDS_IRON_TOOL).add(block);
-                    case (3) -> tag(BlockTags.NEEDS_DIAMOND_TOOL).add(block);
+                    case 1 -> tag(BlockTags.NEEDS_STONE_TOOL).add(block);
+                    case 2 -> tag(BlockTags.NEEDS_IRON_TOOL).add(block);
+                    case 3 -> tag(BlockTags.NEEDS_DIAMOND_TOOL).add(block);
+                    case 4 -> tag(Tags.Blocks.NEEDS_NETHERITE_TOOL).add(block);
                 }
             }
 

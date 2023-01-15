@@ -1,4 +1,4 @@
-package alexthw.ars_elemental.common.blocks;
+package alexthw.ars_elemental.common.blocks.upstream;
 
 import com.hollingsworth.arsnouveau.common.block.TickableModBlock;
 import net.minecraft.core.BlockPos;
@@ -15,6 +15,6 @@ public class UpstreamBlock extends TickableModBlock {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
-        return new UpstreamTile(pPos,pState);
+        return new WaterUpstreamTile(pPos, pState);
     }
 }

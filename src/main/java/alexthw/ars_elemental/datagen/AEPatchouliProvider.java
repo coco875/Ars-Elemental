@@ -5,9 +5,7 @@ import alexthw.ars_elemental.common.entity.familiars.MermaidHolder;
 import alexthw.ars_elemental.common.items.armor.ArmorSet;
 import alexthw.ars_elemental.common.items.armor.ShockPerk;
 import alexthw.ars_elemental.common.items.armor.SporePerk;
-import alexthw.ars_elemental.common.rituals.DetectionRitual;
-import alexthw.ars_elemental.common.rituals.SquirrelRitual;
-import alexthw.ars_elemental.common.rituals.TeslaRitual;
+import alexthw.ars_elemental.common.rituals.*;
 import alexthw.ars_elemental.registry.ModItems;
 import alexthw.ars_elemental.registry.ModRegistry;
 import com.hollingsworth.arsnouveau.api.ArsNouveauAPI;
@@ -20,6 +18,7 @@ import com.hollingsworth.arsnouveau.api.spell.AbstractSpellPart;
 import com.hollingsworth.arsnouveau.common.datagen.PatchouliProvider;
 import com.hollingsworth.arsnouveau.common.datagen.patchouli.*;
 import com.hollingsworth.arsnouveau.common.items.PerkItem;
+import com.hollingsworth.arsnouveau.setup.ItemsRegistry;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
@@ -63,19 +62,33 @@ public class AEPatchouliProvider extends PatchouliProvider {
                 , getPath(RESOURCES, "flashing_archwood"));
 
         addBasicItem(ModItems.WATER_URN.get(), MACHINES, new ApparatusPage(ModItems.WATER_URN.get()));
-        addBasicItem(ModItems.UPSTREAM_BLOCK.get(), MACHINES, new ApparatusPage(ModItems.UPSTREAM_BLOCK.get()));
+        addBasicItem(ModItems.WATER_UPSTREAM_BLOCK.get(), MACHINES, new ApparatusPage(ModItems.WATER_UPSTREAM_BLOCK.get()));
+        //addBasicItem(ModItems.LAVA_UPSTREAM_BLOCK.get(), MACHINES, new ApparatusPage(ModItems.LAVA_UPSTREAM_BLOCK.get()));
+        //addBasicItem(ModItems.AIR_UPSTREAM_BLOCK.get(), MACHINES, new ApparatusPage(ModItems.AIR_UPSTREAM_BLOCK.get()));
         addBasicItem(ModItems.CURIO_BAG.get(), EQUIPMENT, new CraftingPage(ModItems.CURIO_BAG.get()));
         addBasicItem(ModItems.CASTER_BAG.get(), EQUIPMENT, new CraftingPage(ModItems.CASTER_BAG.get()));
         addBasicItem(ModItems.ENCHANTER_BANGLE.get(), EQUIPMENT, new ApparatusPage(ModItems.ENCHANTER_BANGLE.get()));
 
-        addPage(new PatchouliBuilder(MACHINES, "elemental_turrets")
+        addBasicItem(ModItems.SPELL_MIRROR.get(), AUTOMATION, new ApparatusPage(ModItems.SPELL_MIRROR.get()));
+
+        addPage(new PatchouliBuilder(AUTOMATION, ModItems.ADVANCED_PRISM.get())
+                        .withIcon(ModItems.ADVANCED_PRISM.get())
+                        .withTextPage("ars_elemental.page1.advanced_prism")
+                        .withPage(new CraftingPage(ModItems.ADVANCED_PRISM.get()))
+                        .withTextPage("ars_elemental.page2.advanced_prism")
+                        .withPage(ImbuementPage(ModItems.ARC_LENS.get()))
+                        .withPage(ImbuementPage(ModItems.HOMING_LENS.get()))
+                        .withPage(ImbuementPage(ModItems.RGB_LENS.get()))
+                , getPath(AUTOMATION, "advanced_prism"));
+
+        addPage(new PatchouliBuilder(AUTOMATION, "elemental_turrets")
                         .withIcon(ModItems.FIRE_TURRET.get())
                         .withTextPage("ars_elemental.page1.elemental_turrets")
                         .withPage(ImbuementPage(ModItems.FIRE_TURRET.get()))
                         .withPage(ImbuementPage(ModItems.WATER_TURRET.get()))
                         .withPage(ImbuementPage(ModItems.AIR_TURRET.get()))
                         .withPage(ImbuementPage(ModItems.EARTH_TURRET.get()))
-                , getPath(MACHINES, "elemental_turrets"));
+                , getPath(AUTOMATION, "elemental_turrets"));
 
         addPage(new PatchouliBuilder(EQUIPMENT, ModItems.SPELL_HORN.get())
                         .withIcon(ModItems.SPELL_HORN.get())
@@ -179,10 +192,13 @@ public class AEPatchouliProvider extends PatchouliProvider {
 
         addRitualPage(new SquirrelRitual());
         addRitualPage(new TeslaRitual());
+        addRitualPage(new AttractionRitual());
+        addRitualPage(new RepulsionRitual());
         addRitualPage(new DetectionRitual());
 
         addEnchantmentPage(ModRegistry.MIRROR.get());
         addEnchantmentPage(ModRegistry.SOULBOUND.get());
+        addPage(new PatchouliBuilder(ENCHANTMENTS, ItemsRegistry.NOVICE_SPELLBOOK.get()).withTextPage("ars_elemental.page.book_protection").withName("tooltip.ars_nouveau.blessed").withPage(new ApparatusPage(prefix("invincible_book").toString())), getPath(ENCHANTMENTS, "invincible_book"));
 
         for (PatchouliPage patchouliPage : pages) {
             DataProvider.saveStable(cache, patchouliPage.build(), patchouliPage.path());

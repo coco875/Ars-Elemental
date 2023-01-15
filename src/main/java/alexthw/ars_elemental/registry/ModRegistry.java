@@ -20,9 +20,9 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProviderType;
 import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.registries.*;
-
-import java.util.Objects;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 
 import static alexthw.ars_elemental.ArsElemental.MODID;
 import static alexthw.ars_elemental.ArsElemental.prefix;
@@ -68,14 +68,6 @@ public class ModRegistry {
         FEATURES.register(bus);
         BS_PROVIDERS.register(bus);
     }
-
-    public static void registerEvent(RegisterEvent event) {
-        if (event.getRegistryKey().equals(ForgeRegistries.Keys.ENTITY_TYPES)) {
-            IForgeRegistry<EntityType<?>> registry = Objects.requireNonNull(event.getForgeRegistry());
-            ModEntities.registerEntities(registry);
-        }
-    }
-
 
     public static final RegistryObject<MenuType<CurioHolderContainer>> CURIO_HOLDER;
     public static final RegistryObject<MenuType<CasterHolderContainer>> CASTER_HOLDER;

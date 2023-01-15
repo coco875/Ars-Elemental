@@ -3,8 +3,15 @@ package alexthw.ars_elemental.registry;
 import alexthw.ars_elemental.ArsElemental;
 import alexthw.ars_elemental.ArsNouveauRegistry;
 import alexthw.ars_elemental.client.ElementalTurretRenderer;
-import alexthw.ars_elemental.common.blocks.*;
+import alexthw.ars_elemental.client.PrismRenderer;
+import alexthw.ars_elemental.common.blocks.ElementalTurret;
+import alexthw.ars_elemental.common.blocks.EverfullUrnBlock;
+import alexthw.ars_elemental.common.blocks.SporeBlossomGround;
 import alexthw.ars_elemental.common.blocks.mermaid_block.MermaidRock;
+import alexthw.ars_elemental.common.blocks.prism.*;
+import alexthw.ars_elemental.common.blocks.upstream.AirUpstreamTile;
+import alexthw.ars_elemental.common.blocks.upstream.MagmaUpstreamTile;
+import alexthw.ars_elemental.common.blocks.upstream.UpstreamBlock;
 import alexthw.ars_elemental.common.items.*;
 import alexthw.ars_elemental.common.items.armor.ArmorSet;
 import alexthw.ars_elemental.common.items.bangles.*;
@@ -36,6 +43,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.SaplingBlock;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
@@ -73,13 +81,17 @@ public class ModItems {
 
     public static final RegistryObject<Block> GROUND_BLOSSOM;
 
-    public static final RegistryObject<Block> UPSTREAM_BLOCK;
+    public static final RegistryObject<Block> WATER_UPSTREAM_BLOCK;
+    public static final RegistryObject<Block> LAVA_UPSTREAM_BLOCK;
+    public static final RegistryObject<Block> AIR_UPSTREAM_BLOCK;
     public static final RegistryObject<Block> FIRE_TURRET;
     public static final RegistryObject<Block> WATER_TURRET;
     public static final RegistryObject<Block> AIR_TURRET;
     public static final RegistryObject<Block> EARTH_TURRET;
 
-    //public static final RegistryObject<Block> HOMING_PRISM;public static final RegistryObject<Block> ARC_PRISM;
+    public static final RegistryObject<Block> ADVANCED_PRISM;
+    public static final RegistryObject<Block> SPELL_MIRROR;
+
 
     public static final RegistryObject<Item> FIRE_FOCUS;
     public static final RegistryObject<Item> AIR_FOCUS;
@@ -114,6 +126,11 @@ public class ModItems {
 
     public static final RegistryObject<Item> DEBUG_ICON;
     public static final RegistryObject<Item> MARK_OF_MASTERY;
+
+    public static final RegistryObject<Item> HOMING_LENS;
+    public static final RegistryObject<Item> ARC_LENS;
+    public static final RegistryObject<Item> RGB_LENS;
+
     public static final RegistryObject<Item> ANIMA_ESSENCE;
 
     public static final RegistryObject<Item> SIREN_SHARDS;
@@ -155,6 +172,10 @@ public class ModItems {
 
         SPELL_HORN = ITEMS.register("spell_horn", () -> new SpellHorn(addTabProp()));
 
+        HOMING_LENS = ITEMS.register("homing_prism_lens", () -> new HomingPrismLens(addTabProp()));
+        ARC_LENS = ITEMS.register("arc_prism_lens", () -> new ArcPrismLens(addTabProp()));
+        RGB_LENS = ITEMS.register("rainbow_prism_lens", () -> new RainbowPrismLens(addTabProp()));
+
         //curio
         CURIO_BAG = ITEMS.register("curio_bag", () -> new CurioHolder(addTabProp().fireResistant().stacksTo(1)));
         FIRE_FOCUS = ITEMS.register("fire_focus", () -> new GreaterElementalFocus(FocusProp(), SpellSchools.ELEMENTAL_FIRE));
@@ -186,19 +207,36 @@ public class ModItems {
         //blocks
         WATER_URN = addBlock("everfull_urn", () -> new EverfullUrnBlock(blockProps(Material.CLAY, MaterialColor.COLOR_BROWN).sound(SoundType.PACKED_MUD).noOcclusion()));
         MERMAID_ROCK = addBlock("mermaid_rock", () -> new MermaidRock(blockProps(Material.STONE, MaterialColor.COLOR_LIGHT_BLUE).sound(SoundType.CORAL_BLOCK).strength(2.0f, 6.0f).noOcclusion().lightLevel(b -> 10)));
-        UPSTREAM_BLOCK = addBlock("water_upstream", () -> new UpstreamBlock(blockProps(Material.STONE, MaterialColor.COLOR_LIGHT_BLUE).sound(SoundType.STONE).strength(2.0f, 6.0f)));
         GROUND_BLOSSOM = addBlock("spore_blossom_up", () -> new SporeBlossomGround(blockProps(Material.PLANT, MaterialColor.COLOR_PINK).sound(SoundType.SPORE_BLOSSOM).noOcclusion()));
-
-        /*
-        HOMING_PRISM = addBlock("homing_prism", () -> new HomingPrism(blockProps(Material.STONE, MaterialColor.TERRACOTTA_WHITE)));
-        ARC_PRISM = addBlock("arc_prism", () -> new ArcPrism(blockProps(Material.STONE, MaterialColor.TERRACOTTA_WHITE)));
-         */
+        WATER_UPSTREAM_BLOCK = addBlock("water_upstream", () -> new UpstreamBlock(blockProps(Material.STONE, MaterialColor.COLOR_LIGHT_BLUE).sound(SoundType.STONE).strength(2.0f, 6.0f)));
+        LAVA_UPSTREAM_BLOCK = addBlock("magma_upstream", () -> new UpstreamBlock(blockProps(Material.STONE, MaterialColor.COLOR_RED).sound(SoundType.STONE).strength(2.0f, 6.0f)) {
+            @Override
+            public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
+                return new MagmaUpstreamTile(pPos, pState);
+            }
+        });
+        AIR_UPSTREAM_BLOCK = addBlock("air_upstream", () -> new UpstreamBlock(blockProps(Material.STONE, MaterialColor.COLOR_YELLOW).sound(SoundType.STONE).strength(2.0f, 6.0f)) {
+            @Override
+            public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
+                return new AirUpstreamTile(pPos, pState);
+            }
+        });
 
         //turrets
         FIRE_TURRET = addGeckoBlock("fire_turret", () -> new ElementalTurret(blockProps(Material.METAL, MaterialColor.COLOR_RED).sound(SoundType.STONE).strength(2.0f, 6.0f), SpellSchools.ELEMENTAL_FIRE), "fire");
         WATER_TURRET = addGeckoBlock("water_turret", () -> new ElementalTurret(blockProps(Material.METAL, MaterialColor.COLOR_LIGHT_BLUE).sound(SoundType.STONE).strength(2.0f, 6.0f), SpellSchools.ELEMENTAL_WATER), "water");
         AIR_TURRET = addGeckoBlock("air_turret", () -> new ElementalTurret(blockProps(Material.METAL, MaterialColor.COLOR_YELLOW).sound(SoundType.STONE).strength(2.0f, 6.0f), SpellSchools.ELEMENTAL_AIR), "air");
         EARTH_TURRET = addGeckoBlock("earth_turret", () -> new ElementalTurret(blockProps(Material.METAL, MaterialColor.COLOR_GREEN).sound(SoundType.STONE).strength(2.0f, 6.0f), SpellSchools.ELEMENTAL_EARTH), "earth");
+
+        ADVANCED_PRISM = BLOCKS.register("advanced_prism", () -> new AdvancedPrism(blockProps(Material.STONE, MaterialColor.TERRACOTTA_WHITE)));
+        ITEMS.register("advanced_prism", () -> new RendererBlockItem(ADVANCED_PRISM.get(), addTabProp()) {
+            @Override
+            @OnlyIn(Dist.CLIENT)
+            public Supplier<BlockEntityWithoutLevelRenderer> getRenderer() {
+                return PrismRenderer::getISTER;
+            }
+        });
+        SPELL_MIRROR = addBlock("spell_mirror", () -> new SpellMirror(blockProps(Material.STONE, MaterialColor.TERRACOTTA_WHITE)));
 
         //Trees
         FLASHING_SAPLING = addBlock("yellow_archwood_sapling", () -> new SaplingBlock(new MagicTree(() -> WorldRegistry.FLASHING_TREE), SAP_PROP));
