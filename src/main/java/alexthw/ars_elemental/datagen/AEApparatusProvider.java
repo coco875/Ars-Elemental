@@ -7,12 +7,15 @@ import com.hollingsworth.arsnouveau.common.datagen.ApparatusRecipeProvider;
 import com.hollingsworth.arsnouveau.common.datagen.Recipes;
 import com.hollingsworth.arsnouveau.setup.BlockRegistry;
 import com.hollingsworth.arsnouveau.setup.ItemsRegistry;
+import net.minecraft.data.HashCache;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
-import net.minecraft.data.HashCache;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.Tags;
 
 import java.io.IOException;
@@ -32,46 +35,48 @@ public class AEApparatusProvider extends ApparatusRecipeProvider {
                 .withReagent(ItemsRegistry.SUMMONING_FOCUS)
                 .withPedestalItem(2, Items.WITHER_ROSE)
                 .withPedestalItem(1, Items.WITHER_SKELETON_SKULL)
-                .withPedestalItem(1, ItemsRegistry.CONJURATION_ESSENCE)
+                .withPedestalItem(1, ModItems.ANIMA_ESSENCE.get())
                 .keepNbtOfReagent(true)
                 .build()
         );
 
         recipes.add(builder()
-                .withResult(ModItems.FIRE_FOCUS.get())
-                .withReagent(ModItems.LESSER_FIRE_FOCUS.get())
-                .withPedestalItem(ItemsRegistry.WILDEN_TRIBUTE)
-                .keepNbtOfReagent(true)
-                .build()
-        );
-        recipes.add(builder()
-                .withResult(ModItems.AIR_FOCUS.get())
-                .withReagent(ModItems.LESSER_AIR_FOCUS.get())
-                .withPedestalItem(ItemsRegistry.WILDEN_TRIBUTE)
-                .keepNbtOfReagent(true)
-                .build()
-        );
-        recipes.add(builder()
-                .withResult(ModItems.EARTH_FOCUS.get())
-                .withReagent(ModItems.LESSER_EARTH_FOCUS.get())
-                .withPedestalItem(ItemsRegistry.WILDEN_TRIBUTE)
-                .keepNbtOfReagent(true)
-                .build()
-        );
-        recipes.add(builder()
-                .withResult(ModItems.WATER_FOCUS.get())
-                .withReagent(ModItems.LESSER_WATER_FOCUS.get())
-                .withPedestalItem(ItemsRegistry.WILDEN_TRIBUTE)
-                .keepNbtOfReagent(true)
-                .build()
-        );
-
-        recipes.add(builder()
-                .withResult(ModItems.UPSTREAM_BLOCK.get())
+                .withResult(ModItems.WATER_UPSTREAM_BLOCK.get())
                 .withReagent(Items.SOUL_SAND)
                 .withPedestalItem(ItemsRegistry.AIR_ESSENCE)
                 .withPedestalItem(ItemsRegistry.WATER_ESSENCE)
                 .withPedestalItem(4, Items.PRISMARINE_SHARD)
+                .keepNbtOfReagent(true)
+                .build()
+        );
+
+        recipes.add(builder()
+                .withResult(ModItems.LAVA_UPSTREAM_BLOCK.get())
+                .withReagent(Items.SOUL_SAND)
+                .withPedestalItem(ItemsRegistry.AIR_ESSENCE)
+                .withPedestalItem(ItemsRegistry.FIRE_ESSENCE)
+                .withPedestalItem(4, Items.MAGMA_BLOCK)
+                .keepNbtOfReagent(true)
+                .build()
+        );
+
+        recipes.add(builder()
+                .withResult(ModItems.AIR_UPSTREAM_BLOCK.get())
+                .withReagent(Items.GOLD_BLOCK)
+                .withPedestalItem(4, ItemsRegistry.AIR_ESSENCE)
+                .withPedestalItem(ItemsRegistry.WILDEN_WING)
+                .withPedestalItem(2, Items.SHULKER_SHELL)
+                .keepNbtOfReagent(true)
+                .build()
+        );
+
+        recipes.add(builder()
+                .withResult(ModItems.WATER_URN.get())
+                .withReagent(Blocks.FLOWER_POT)
+                .withPedestalItem(Recipes.SOURCE_GEM)
+                .withPedestalItem(2, ItemsRegistry.WATER_ESSENCE)
+                .withPedestalItem(2, Items.PRISMARINE_SHARD)
+                .keepNbtOfReagent(true)
                 .build()
         );
 
@@ -116,7 +121,7 @@ public class AEApparatusProvider extends ApparatusRecipeProvider {
                 .withReagent(ModItems.ENCHANTER_BANGLE.get())
                 .withPedestalItem(ItemsRegistry.AIR_ESSENCE)
                 .withPedestalItem(ItemsRegistry.AIR_ESSENCE)
-                .withPedestalItem(ItemsRegistry.AIR_ESSENCE)
+                .withPedestalItem(Items.PISTON)
                 .withPedestalItem(ItemsRegistry.AIR_ESSENCE)
                 .build()
         );
@@ -125,7 +130,7 @@ public class AEApparatusProvider extends ApparatusRecipeProvider {
                 .withReagent(ModItems.ENCHANTER_BANGLE.get())
                 .withPedestalItem(ItemsRegistry.FIRE_ESSENCE)
                 .withPedestalItem(ItemsRegistry.FIRE_ESSENCE)
-                .withPedestalItem(ItemsRegistry.FIRE_ESSENCE)
+                .withPedestalItem(Items.FIRE_CHARGE)
                 .withPedestalItem(ItemsRegistry.FIRE_ESSENCE)
                 .build()
         );
@@ -134,7 +139,7 @@ public class AEApparatusProvider extends ApparatusRecipeProvider {
                 .withReagent(ModItems.ENCHANTER_BANGLE.get())
                 .withPedestalItem(ItemsRegistry.EARTH_ESSENCE)
                 .withPedestalItem(ItemsRegistry.EARTH_ESSENCE)
-                .withPedestalItem(ItemsRegistry.EARTH_ESSENCE)
+                .withPedestalItem(Items.COBWEB)
                 .withPedestalItem(ItemsRegistry.EARTH_ESSENCE)
                 .build()
         );
@@ -143,31 +148,85 @@ public class AEApparatusProvider extends ApparatusRecipeProvider {
                 .withReagent(ModItems.ENCHANTER_BANGLE.get())
                 .withPedestalItem(ItemsRegistry.WATER_ESSENCE)
                 .withPedestalItem(ItemsRegistry.WATER_ESSENCE)
+                .withPedestalItem(Items.POWDER_SNOW_BUCKET)
                 .withPedestalItem(ItemsRegistry.WATER_ESSENCE)
-                .withPedestalItem(ItemsRegistry.WATER_ESSENCE)
+                .build()
+        );
+
+        //focus upgrade
+
+        recipes.add(builder()
+                .withResult(ModItems.FIRE_FOCUS.get())
+                .withReagent(ModItems.LESSER_FIRE_FOCUS.get())
+                .withPedestalItem(ModItems.MARK_OF_MASTERY.get())
+                .keepNbtOfReagent(true)
+                .build()
+        );
+        recipes.add(builder()
+                .withResult(ModItems.AIR_FOCUS.get())
+                .withReagent(ModItems.LESSER_AIR_FOCUS.get())
+                .withPedestalItem(ModItems.MARK_OF_MASTERY.get())
+                .keepNbtOfReagent(true)
+                .build()
+        );
+        recipes.add(builder()
+                .withResult(ModItems.EARTH_FOCUS.get())
+                .withReagent(ModItems.LESSER_EARTH_FOCUS.get())
+                .withPedestalItem(ModItems.MARK_OF_MASTERY.get())
+                .keepNbtOfReagent(true)
+                .build()
+        );
+        recipes.add(builder()
+                .withResult(ModItems.WATER_FOCUS.get())
+                .withReagent(ModItems.LESSER_WATER_FOCUS.get())
+                .withPedestalItem(ModItems.MARK_OF_MASTERY.get())
+                .keepNbtOfReagent(true)
+                .build()
+        );
+
+        //mirror
+        recipes.add(builder()
+                .withResult(new ItemStack(ModItems.SPELL_MIRROR.get(), 2))
+                .withReagent(Recipes.SOURCE_GEM_BLOCK)
+                .withPedestalItem(2, Recipes.ARCHWOOD_LOG)
+                .withPedestalItem(2, Ingredient.of(Tags.Items.GEMS_QUARTZ))
+                .withPedestalItem(2, Items.GOLD_INGOT)
                 .build()
         );
 
         //mirror shield enchant
         recipes.add(builder()
-                .withPedestalItem(ItemsRegistry.ENCHANTERS_MIRROR)
+                .withPedestalItem(BlockRegistry.SPELL_PRISM)
                 .withPedestalItem(ItemsRegistry.MANIPULATION_ESSENCE)
                 .withPedestalItem(ItemsRegistry.ABJURATION_ESSENCE)
-                .buildEnchantmentRecipe(ModRegistry.MIRROR.get(), 1, 3000));
+                .buildEnchantmentRecipe(ModRegistry.MIRROR.get(), 1, 2000));
 
         recipes.add(builder()
                 .withPedestalItem(ItemsRegistry.AIR_ESSENCE)
                 .withPedestalItem(ItemsRegistry.FIRE_ESSENCE)
                 .withPedestalItem(ItemsRegistry.EARTH_ESSENCE)
                 .withPedestalItem(ItemsRegistry.WATER_ESSENCE)
-                .withPedestalItem(Ingredient.of(Tags.Items.STORAGE_BLOCKS_LAPIS))
-                .buildEnchantmentRecipe(ModRegistry.MIRROR.get(), 2, 6000));
+                .withPedestalItem(Ingredient.of(ModItems.SPELL_MIRROR))
+                .buildEnchantmentRecipe(ModRegistry.MIRROR.get(), 2, 5000));
 
         recipes.add(builder()
-                .withPedestalItem(BlockRegistry.SPELL_PRISM)
+                .withPedestalItem(ItemsRegistry.ENCHANTERS_MIRROR)
                 .withPedestalItem(Items.TOTEM_OF_UNDYING)
                 .withPedestalItem(Recipes.SOURCE_GEM_BLOCK)
-                .buildEnchantmentRecipe(ModRegistry.MIRROR.get(), 3, 9000));
+                .buildEnchantmentRecipe(ModRegistry.MIRROR.get(), 3, 8000));
+
+        recipes.add(builder()
+                .withPedestalItem(Ingredient.of(ModItems.ANIMA_ESSENCE))
+                .withPedestalItem(Items.TOTEM_OF_UNDYING)
+                .withPedestalItem(Blocks.LAPIS_BLOCK)
+                .withPedestalItem(Recipes.SOURCE_GEM_BLOCK)
+                .buildEnchantmentRecipe(ModRegistry.SOULBOUND.get(), 1, 10000));
+
+        addArmorRecipes(ModItems.FIRE_ARMOR, ItemsRegistry.FIRE_ESSENCE);
+        addArmorRecipes(ModItems.WATER_ARMOR, ItemsRegistry.WATER_ESSENCE);
+        addArmorRecipes(ModItems.AIR_ARMOR, ItemsRegistry.AIR_ESSENCE);
+        addArmorRecipes(ModItems.EARTH_ARMOR, ItemsRegistry.EARTH_ESSENCE);
+
 
         Path output = this.generator.getOutputFolder();
         for (EnchantingApparatusRecipe g : recipes) {

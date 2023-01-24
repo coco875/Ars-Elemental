@@ -1,11 +1,11 @@
 package alexthw.ars_elemental.datagen;
 
-import alexthw.ars_elemental.common.rituals.DetectionRitual;
-import alexthw.ars_elemental.common.rituals.SquirrelRitual;
-import alexthw.ars_elemental.common.rituals.TeslaRitual;
+import alexthw.ars_elemental.common.rituals.*;
+import com.hollingsworth.arsnouveau.ArsNouveau;
 import com.hollingsworth.arsnouveau.api.ArsNouveauAPI;
 import com.hollingsworth.arsnouveau.common.datagen.Recipes;
 import com.hollingsworth.arsnouveau.common.lib.RitualLib;
+import com.hollingsworth.arsnouveau.setup.BlockRegistry;
 import com.hollingsworth.arsnouveau.setup.ItemsRegistry;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.data.DataGenerator;
@@ -13,6 +13,7 @@ import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -34,46 +35,64 @@ public class ModRecipeProvider extends RecipeProvider {
     @Override
     protected void buildCraftingRecipes(Consumer<FinishedRecipe> consumer) {
 
+        ShapedRecipeBuilder.shaped(ADVANCED_PRISM.get())
+                .define('P', BlockRegistry.SPELL_PRISM.asItem())
+                .define('Q', Items.QUARTZ)
+                .define('S', Recipes.SOURCE_GEM)
+                .pattern("QSQ").pattern("SPS").pattern("QSQ")
+                .unlockedBy("has_journal", InventoryChangeTrigger.TriggerInstance.hasItems(ItemsRegistry.WORN_NOTEBOOK))
+                .save(consumer);
         shapelessBuilder(GROUND_BLOSSOM.get()).requires(Blocks.SPORE_BLOSSOM).save(consumer);
         shapelessBuilder(Blocks.SPORE_BLOSSOM).requires(GROUND_BLOSSOM.get()).save(consumer, prefix("alt_blossom"));
 
         Recipes.makeWood(FLASHING_ARCHWOOD_LOG.get(), FLASHING_ARCHWOOD.get(), 3).save(consumer);
         strippedLogToWood(consumer, FLASHING_ARCHWOOD_LOG_STRIPPED.get(), FLASHING_ARCHWOOD_STRIPPED.get());
 
-        shapelessBuilder(getRitualItem(RitualLib.FLIGHT))
+        shapelessBuilder(getRitualItem(new ResourceLocation(ArsNouveau.MODID, RitualLib.FLIGHT)))
                 .requires(FLASHING_ARCHWOOD_LOG.get())
                 .requires(ItemsRegistry.WILDEN_WING, 1)
                 .requires(Ingredient.of(Tags.Items.GEMS_DIAMOND), 2)
                 .requires(Items.FEATHER)
                 .save(consumer, prefix("flight_alt"));
 
-
-        shapelessBuilder(getRitualItem(TeslaRitual.ID))
+        shapelessBuilder(getRitualItem(prefix(TeslaRitual.ID)))
                 .requires(FLASHING_ARCHWOOD_LOG.get())
                 .requires(ItemsRegistry.AIR_ESSENCE)
                 .requires(Ingredient.of(Tags.Items.GEMS_DIAMOND), 2)
                 .requires(Items.LIGHTNING_ROD)
                 .requires(Recipes.SOURCE_GEM_BLOCK)
-                .save(consumer, prefix("ritual_" + TeslaRitual.ID));
+                .save(consumer, prefix("tablet_" + TeslaRitual.ID));
 
 
-        shapelessBuilder(getRitualItem(SquirrelRitual.ID))
+        shapelessBuilder(getRitualItem(prefix(SquirrelRitual.ID)))
                 .requires(FLASHING_ARCHWOOD_LOG.get())
                 .requires(ItemsRegistry.STARBUNCLE_SHARD)
                 .requires(Items.SUGAR)
                 .requires(Items.RABBIT_FOOT)
-                .save(consumer, prefix("ritual_" + SquirrelRitual.ID));
+                .save(consumer, prefix("tablet_" + SquirrelRitual.ID));
 
-        shapelessBuilder(getRitualItem(DetectionRitual.ID))
+        shapelessBuilder(getRitualItem(prefix(DetectionRitual.ID)))
                 .requires(FLASHING_ARCHWOOD_LOG.get())
                 .requires(Items.SPIDER_EYE, 2)
                 .requires(Items.GLOWSTONE_DUST)
                 .requires(Recipes.SOURCE_GEM_BLOCK)
-                .save(consumer, prefix("ritual_" + DetectionRitual.ID));
+                .save(consumer, prefix("tablet_" + DetectionRitual.ID));
+
+        shapelessBuilder(getRitualItem(prefix(AttractionRitual.ID)))
+                .requires(BlockRegistry.FLOURISHING_LOG)
+                .requires(Ingredient.of(Tags.Items.INGOTS_IRON), 2)
+                .requires(ItemsRegistry.EARTH_ESSENCE)
+                .save(consumer, prefix("tablet_" + AttractionRitual.ID));
+
+        shapelessBuilder(getRitualItem(prefix(RepulsionRitual.ID)))
+                .requires(FLASHING_ARCHWOOD_LOG.get())
+                .requires(ItemsRegistry.AIR_ESSENCE, 2)
+                .requires(Blocks.PISTON, 1)
+                .save(consumer, prefix("tablet_" + RepulsionRitual.ID));
 
     }
 
-    public Item getRitualItem(String id) {
+    public Item getRitualItem(ResourceLocation id) {
         return ArsNouveauAPI.getInstance().getRitualItemMap().get(id);
     }
 

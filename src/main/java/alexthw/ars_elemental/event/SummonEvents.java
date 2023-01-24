@@ -1,15 +1,17 @@
 package alexthw.ars_elemental.event;
 
-
 import alexthw.ars_elemental.ArsElemental;
 import alexthw.ars_elemental.ArsNouveauRegistry;
+import alexthw.ars_elemental.api.IUndeadSummon;
+import alexthw.ars_elemental.api.item.ISchoolFocus;
 import alexthw.ars_elemental.common.entity.summon.*;
-import alexthw.ars_elemental.common.items.ISchoolFocus;
-import alexthw.ars_elemental.common.items.NecroticFocus;
-import alexthw.ars_elemental.util.ParticleUtil;
+import alexthw.ars_elemental.common.items.foci.NecroticFocus;
 import com.hollingsworth.arsnouveau.api.event.SummonEvent;
 import com.hollingsworth.arsnouveau.api.spell.SpellSchool;
-import com.hollingsworth.arsnouveau.common.entity.*;
+import com.hollingsworth.arsnouveau.common.entity.EntityAllyVex;
+import com.hollingsworth.arsnouveau.common.entity.SummonHorse;
+import com.hollingsworth.arsnouveau.common.entity.SummonSkeleton;
+import com.hollingsworth.arsnouveau.common.entity.SummonWolf;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -77,7 +79,7 @@ public class SummonEvents {
 
     @SubscribeEvent(priority = EventPriority.HIGH)
     public static void reRaiseSummon(SummonEvent.Death event) {
-        if (!event.world.isClientSide && event.summon.getLivingEntity() != null) {
+        if (!event.world.isClientSide) {
             ServerLevel world = (ServerLevel) event.world;
             if (event.summon.getOwner(world) instanceof Player player && !(event.summon instanceof IUndeadSummon)) {
                 if (NecroticFocus.hasFocus(event.world, player)) {
@@ -88,9 +90,6 @@ public class SummonEvents {
                         toRaise = new AllyVhexEntity(world, vex, player);
                     } else if (event.summon instanceof SummonSkeleton skelly) {
                         toRaise = new SummonUndead(world, skelly, player);
-                    } else {
-                        player.heal(1.0F);
-                        event.world.addFreshEntity(new EntityFollowProjectile(world, event.summon.getLivingEntity().blockPosition(), player.blockPosition(), ParticleUtil.soulColor.toWrapper()));
                     }
                     if (toRaise instanceof IUndeadSummon undead) {
                         undead.inherit(event.summon);

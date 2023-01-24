@@ -2,7 +2,8 @@ package alexthw.ars_elemental.common.blocks.mermaid_block;
 
 import alexthw.ars_elemental.ConfigHandler.Common;
 import alexthw.ars_elemental.common.entity.MermaidEntity;
-import alexthw.ars_elemental.registry.ModEntities;
+import alexthw.ars_elemental.common.entity.spells.EntityLerpedProjectile;
+import alexthw.ars_elemental.registry.ModTiles;
 import com.google.common.collect.ImmutableList;
 import com.hollingsworth.arsnouveau.api.ANFakePlayer;
 import com.hollingsworth.arsnouveau.api.client.ITooltipProvider;
@@ -15,7 +16,6 @@ import com.hollingsworth.arsnouveau.common.block.tile.SummoningTile;
 import com.hollingsworth.arsnouveau.common.entity.EntityFollowProjectile;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
@@ -47,7 +47,7 @@ public class MermaidTile extends SummoningTile implements ITooltipProvider {
     public boolean needsMana;
 
     public MermaidTile(BlockPos pos, BlockState state) {
-        super(ModEntities.MERMAID_TILE, pos, state);
+        super(ModTiles.MERMAID_TILE.get(), pos, state);
     }
 
     public void convertedEffect() {
@@ -142,6 +142,7 @@ public class MermaidTile extends SummoningTile implements ITooltipProvider {
         ANFakePlayer fakePlayer = ANFakePlayer.getPlayer(server);
         LootTable lootTable = server.getServer().getLootTables().get(BuiltInLootTables.FISHING_FISH);
         LootTable lootTableTreasure = server.getServer().getLootTables().get(BuiltInLootTables.FISHING_TREASURE);
+        LootTable lootTableJunk = server.getServer().getLootTables().get(BuiltInLootTables.FISHING_JUNK);
 
         LootContext lootContext = (new LootContext.Builder(server)).withRandom(level.getRandom())
                 .withParameter(LootContextParams.ORIGIN, fakePlayer.position())
@@ -154,9 +155,11 @@ public class MermaidTile extends SummoningTile implements ITooltipProvider {
         int bonus_rolls = Math.min(bonus / 25, Common.SIREN_UNIQUE_BONUS.get());
         int counter = 0;
         for (int i = 0; i < Common.SIREN_BASE_ITEM.get() + bonus_rolls; i++) {
-            if (flag && this.level.random.nextDouble() < 0.1 + bonus * Common.SIREN_TREASURE_BONUS.get()) {
+            if (flag && bonus > 20 && this.level.random.nextDouble() < 0.1 + bonus * Common.SIREN_TREASURE_BONUS.get()) {
                 list = lootTableTreasure.getRandomItems(lootContext);
                 flag = false;
+            } else if (flag && bonus < 20 && this.level.random.nextDouble() < 0.2F) {
+                list = lootTableJunk.getRandomItems(lootContext);
             } else list = lootTable.getRandomItems(lootContext);
 
             for (ItemStack item : list) {
@@ -203,7 +206,7 @@ public class MermaidTile extends SummoningTile implements ITooltipProvider {
                 } else {
                     LivingEntity rnd = getRandomEntity();
                     if (rnd != null) {
-                        EntityFollowProjectile orb = new EntityFollowProjectile(level,
+                        EntityLerpedProjectile orb = new EntityLerpedProjectile(level,
                                 rnd.blockPosition(), this.getBlockPos(),
                                 20, 50, 255);
                         level.addFreshEntity(orb);
@@ -222,8 +225,8 @@ public class MermaidTile extends SummoningTile implements ITooltipProvider {
         if(this.needsMana){
             tooltip.add(new TranslatableComponent("ars_nouveau.wixie.need_mana"));
         }else {
-            tooltip.add(new TranslatableComponent("progress: " + progress));
-            tooltip.add(new TranslatableComponent("bonus: " + bonus));
+            //tooltip.add(Component.translatable("Progress: " + progress + "/" + Common.SIREN_MAX_PROGRESS));
+            tooltip.add(Component.translatable("Aquarium Bonus: " + bonus));
         }
     }
 

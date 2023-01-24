@@ -10,7 +10,7 @@ import net.minecraft.world.phys.Vec3;
 
 public class FirenandoCharm extends Item {
 
-    public FirenandoCharm(Properties props){
+    public FirenandoCharm(Properties props) {
         super(props);
     }
 
@@ -28,8 +28,6 @@ public class FirenandoCharm extends Item {
         firenando.setHome(pos);
         firenando.setOwner(context.getPlayer());
         world.addFreshEntity(firenando);
-        context.getItemInHand().shrink(1);
-
         return InteractionResult.SUCCESS;
     }
 

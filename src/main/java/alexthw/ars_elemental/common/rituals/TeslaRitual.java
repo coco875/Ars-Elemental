@@ -60,6 +60,6 @@ public class TeslaRitual extends AbstractRitual {
         return ID;
     }
 
-    public static String ID = "ae_tesla_coil";
+    public static String ID = "ritual_tesla_coil";
 
 }

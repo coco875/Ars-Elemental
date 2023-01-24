@@ -1,7 +1,9 @@
 {
-  "replace": false,
   "values": [
     "ars_elemental:water_upstream",
+    "ars_elemental:air_upstream",
+    "ars_elemental:magma_upstream",
+    "ars_elemental:spell_mirror",
     "ars_elemental:air_turret",
     "ars_elemental:fire_turret",
     "ars_elemental:earth_turret",

@@ -55,7 +55,7 @@ public class EffectConjureDirt extends AbstractEffect {
                 }
             }
         }
-        GlyphEffectUtil.placeBlocks(rayTraceResult, world, shooter, spellStats, toPlace, spellContext, resolver);
+        GlyphEffectUtil.placeBlocks(rayTraceResult, world, shooter, spellStats, spellContext, resolver, toPlace);
     }
 
     @Override

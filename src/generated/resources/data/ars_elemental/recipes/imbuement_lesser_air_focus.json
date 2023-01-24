@@ -1,11 +1,10 @@
 {
   "type": "ars_nouveau:imbuement",
+  "count": 1,
   "input": {
     "item": "minecraft:amethyst_shard"
   },
   "output": "ars_elemental:lesser_air_focus",
-  "count": 1,
-  "source": 5000,
   "pedestalItems": [
     {
       "item": {
@@ -34,8 +33,9 @@
     },
     {
       "item": {
-        "tag": "ars_nouveau:advanced_spellbook"
+        "item": "minecraft:gold_ingot"
       }
     }
-  ]
+  ],
+  "source": 5000
 }

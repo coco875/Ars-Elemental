@@ -2,11 +2,10 @@
   "type": "ars_nouveau:enchantment",
   "enchantment": "ars_elemental:mirror_shield",
   "level": 3,
-  "sourceCost": 9000,
   "pedestalItems": [
     {
       "item": {
-        "item": "ars_nouveau:spell_prism"
+        "item": "ars_nouveau:enchanters_mirror"
       }
     },
     {
@@ -19,5 +18,6 @@
         "tag": "forge:storage_blocks/source"
       }
     }
-  ]
+  ],
+  "sourceCost": 8000
 }

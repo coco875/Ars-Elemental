@@ -10,6 +10,7 @@ import com.hollingsworth.arsnouveau.api.client.IVariantTextureProvider;
 import com.hollingsworth.arsnouveau.api.entity.IDispellable;
 import com.hollingsworth.arsnouveau.api.util.NBTUtil;
 import com.hollingsworth.arsnouveau.client.particle.ParticleUtil;
+import alexthw.ars_elemental.datagen.advancement.ANCriteriaTriggers;
 import com.hollingsworth.arsnouveau.common.block.tile.IAnimationListener;
 import com.hollingsworth.arsnouveau.common.compat.PatchouliHandler;
 import com.hollingsworth.arsnouveau.common.entity.goal.GoBackHomeGoal;
@@ -24,6 +25,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -44,15 +46,11 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.pathfinder.AmphibiousNodeEvaluator;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.level.pathfinder.PathFinder;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.Tags;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import software.bernie.ars_nouveau.geckolib3.core.IAnimatable;
 import software.bernie.ars_nouveau.geckolib3.core.PlayState;
 import software.bernie.ars_nouveau.geckolib3.core.builder.AnimationBuilder;
@@ -60,7 +58,10 @@ import software.bernie.ars_nouveau.geckolib3.core.controller.AnimationController
 import software.bernie.ars_nouveau.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.ars_nouveau.geckolib3.core.manager.AnimationData;
 import software.bernie.ars_nouveau.geckolib3.core.manager.AnimationFactory;
+import software.bernie.ars_nouveau.geckolib3.util.GeckoLibUtil;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
@@ -69,7 +70,6 @@ import java.util.stream.Collectors;
 
 import static alexthw.ars_elemental.ArsElemental.prefix;
 
-@SuppressWarnings("unchecked")
 public class MermaidEntity extends PathfinderMob implements IAnimatable, IAnimationListener, IVariantTextureProvider, IDispellable {
 
     private final AnimationFactory factory = new AnimationFactory(this);
@@ -108,7 +108,7 @@ public class MermaidEntity extends PathfinderMob implements IAnimatable, IAnimat
         goalSelector.addGoal(3, new BreathAirGoal(this));
         goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 6F));
         goalSelector.addGoal(4, new DolphinJumpGoal(this, 10));
-        goalSelector.addGoal(5, new GoBackHomeGoal(this, this::getHome, 12, () -> this.getHome() != null));
+        goalSelector.addGoal(5, new GoBackHomeGoal(this, this::getHome, 20, () -> this.getHome() != null));
         goalSelector.addGoal(8, new FollowBoatGoalM(this, () -> this.getHome() == null));
     }
 
@@ -121,7 +121,7 @@ public class MermaidEntity extends PathfinderMob implements IAnimatable, IAnimat
     }
 
     @Override
-    public boolean hurt(DamageSource source, float p_70097_2_) {
+    public boolean hurt(@Nonnull DamageSource source, float p_70097_2_) {
         if (source == DamageSource.DROWN || source == DamageSource.IN_WALL || source == DamageSource.SWEET_BERRY_BUSH || source == DamageSource.CACTUS)
             return false;
         return super.hurt(source, p_70097_2_);
@@ -151,7 +151,7 @@ public class MermaidEntity extends PathfinderMob implements IAnimatable, IAnimat
     }
 
     @Override
-    protected int getExperienceReward(@NotNull Player player) {
+    protected int getExperienceReward(Player player) {
         return 0;
     }
 
@@ -218,7 +218,7 @@ public class MermaidEntity extends PathfinderMob implements IAnimatable, IAnimat
         return LivingEntity.createLivingAttributes()
                 .add(Attributes.MAX_HEALTH, 10)
                 .add(Attributes.FOLLOW_RANGE, 10)
-                .add(Attributes.MOVEMENT_SPEED, 0.2F)
+                .add(Attributes.MOVEMENT_SPEED, 0.4F)
                 .build();
     }
 
@@ -278,11 +278,10 @@ public class MermaidEntity extends PathfinderMob implements IAnimatable, IAnimat
     }
 
     public static boolean checkSurfaceWaterAnimalSpawnRules(LevelAccessor levelAccessor, BlockPos pos) {
-        int i = 70;
-        int j = i - 25;
+        int i = levelAccessor.getSeaLevel() + 10;
+        int j = i - 30;
         boolean f1 = pos.getY() >= j && pos.getY() <= i;
-        boolean f2 = levelAccessor.getBiome(pos).is(Biomes.DEEP_LUKEWARM_OCEAN) || levelAccessor.getBiome(pos).is(Biomes.LUKEWARM_OCEAN) || levelAccessor.getBiome(pos).is(Tags.Biomes.IS_HOT_OVERWORLD);
-        return f1 && f2 && levelAccessor.getFluidState(pos.below()).is(FluidTags.WATER) && levelAccessor.getBlockState(pos.above()).is(Blocks.WATER);
+        return f1 && levelAccessor.getFluidState(pos.below()).is(FluidTags.WATER) && levelAccessor.getBlockState(pos.above()).is(Blocks.WATER);
     }
 
     //Pathfinder
@@ -350,6 +349,7 @@ public class MermaidEntity extends PathfinderMob implements IAnimatable, IAnimat
                 taming = false;
                 ItemStack stack = new ItemStack(ModItems.SIREN_SHARDS.get(), 1 + level.random.nextInt(2));
                 level.addFreshEntity(new ItemEntity(level, getX(), getY() + 0.5, getZ(), stack));
+                ANCriteriaTriggers.rewardNearbyPlayers(ANCriteriaTriggers.POOF_MOB, (ServerLevel) this.level, this.getOnPos(), 10);
                 this.remove(RemovalReason.DISCARDED);
                 level.playSound(null, getX(), getY(), getZ(), SoundEvents.ILLUSIONER_MIRROR_MOVE, SoundSource.NEUTRAL, 1f, 1f);
             }
@@ -366,8 +366,8 @@ public class MermaidEntity extends PathfinderMob implements IAnimatable, IAnimat
 
         if (isTamed()) {
             String color = Variants.getColorFromStack(stack);
-            if (color != null && !getColor().equals(color)) {
-                this.entityData.set(COLOR, color);
+            if (color != null && !getColor(this).equals(color)) {
+                this.setColor(color, this);
                 stack.shrink(1);
                 return InteractionResult.SUCCESS;
             }
@@ -399,7 +399,6 @@ public class MermaidEntity extends PathfinderMob implements IAnimatable, IAnimat
             if (stack.getItem() == Items.FIRE_CORAL) return FIRE.toString();
             if (stack.getItem() == Items.BRAIN_CORAL) return BRAIN.toString();
 
-
             return null;
         }
 
@@ -415,13 +414,17 @@ public class MermaidEntity extends PathfinderMob implements IAnimatable, IAnimat
         }
     }
 
-    public String getColor() {
+    public String getColor(MermaidEntity mermaidEntity) {
         return this.entityData.get(COLOR);
     }
 
+    public void setColor(String color, MermaidEntity mermaidEntity) {
+        this.entityData.set(COLOR, color);
+    }
+
     @Override
-    public ResourceLocation getTexture(LivingEntity entity) {
-        return prefix("textures/entity/mermaid_" + (getColor().isEmpty() ? Variants.KELP.toString() : getColor()) + ".png");
+    public ResourceLocation getTextureLocation(MermaidEntity entity) {
+        return prefix("textures/entity/mermaid_" + (getColor(entity).isEmpty() ? Variants.KELP.toString() : getColor(entity)) + ".png");
     }
 
 }

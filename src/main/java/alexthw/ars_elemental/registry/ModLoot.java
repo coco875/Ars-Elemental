@@ -14,6 +14,7 @@ import com.hollingsworth.arsnouveau.common.spell.effect.*;
 import com.hollingsworth.arsnouveau.common.spell.method.MethodSelf;
 import com.hollingsworth.arsnouveau.common.spell.method.MethodTouch;
 import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.item.Item;
@@ -25,9 +26,7 @@ import static com.hollingsworth.arsnouveau.api.loot.DungeonLootTables.RARE_LOOT;
 
 public class ModLoot {
 
-    public static void init() {
-    }
-
+    public static void init(){}
     //Hooking to Ars GLM
     static {
 

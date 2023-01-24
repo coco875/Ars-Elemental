@@ -79,7 +79,6 @@ public class SummonDolphin extends Dolphin implements PlayerRideableJumping, ISu
         return true;
     }
 
-    @Override
     public LivingEntity getControllingPassenger() {
 
         Entity entity = this.getFirstPassenger();
@@ -169,7 +168,7 @@ public class SummonDolphin extends Dolphin implements PlayerRideableJumping, ISu
     private static final EntityDataAccessor<Optional<UUID>> OWNER_UUID = SynchedEntityData.defineId(SummonDolphin.class, EntityDataSerializers.OPTIONAL_UUID);
 
     @Override
-    protected int getExperienceReward(Player pPlayer) {
+    public int getExperienceReward() {
         return 0;
     }
 
@@ -190,11 +189,6 @@ public class SummonDolphin extends Dolphin implements PlayerRideableJumping, ISu
                 onSummonDeath(level, null, true);
             }
         }
-    }
-
-    @Override
-    public boolean canBeControlledByRider() {
-        return true;
     }
 
     @Override

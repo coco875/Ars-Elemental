@@ -4,8 +4,6 @@ import alexthw.ars_elemental.common.entity.spells.EntityCurvedProjectile;
 import com.hollingsworth.arsnouveau.api.spell.*;
 import com.hollingsworth.arsnouveau.common.entity.EntityProjectileSpell;
 import com.hollingsworth.arsnouveau.common.spell.augment.*;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -16,7 +14,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -35,77 +32,55 @@ public class MethodCurvedProjectile extends AbstractCastMethod {
 
     public void summonProjectiles(Level world, LivingEntity shooter, SpellStats stats, SpellResolver resolver) {
         ArrayList<EntityProjectileSpell> projectiles = new ArrayList<>();
-        EntityCurvedProjectile projectileSpell = new EntityCurvedProjectile(world, resolver);
-        projectiles.add(projectileSpell);
         int numSplits = stats.getBuffCount(AugmentSplit.INSTANCE);
         float sizeRatio = shooter.getEyeHeight() / Player.DEFAULT_EYE_HEIGHT;
 
-        for(int i =1; i < numSplits + 1; i++){
-            Direction offset =shooter.getDirection().getClockWise();
-            if(i%2==0) offset = offset.getOpposite();
-            // Alternate sides
-            BlockPos projPos = shooter.blockPosition().relative(offset, i).offset(0, 1.5 * sizeRatio, 0);
+        for (int i = 1; i < 1 + numSplits + 1; i++) {
             EntityCurvedProjectile spell = new EntityCurvedProjectile(world, resolver);
-            spell.setPos(projPos.getX(), projPos.getY(), projPos.getZ());
             projectiles.add(spell);
         }
 
         float velocity = getProjectileSpeed(stats);
-
-        for(EntityProjectileSpell proj : projectiles) {
+        int opposite = -1;
+        int counter = 0;
+        for (EntityProjectileSpell proj : projectiles) {
             proj.setPos(proj.position().add(0, 0.25 * sizeRatio, 0));
-            proj.shoot(shooter, shooter.getXRot(), shooter.getYRot(), 0.0F, velocity, 0.3f);
+            proj.shoot(shooter, shooter.getXRot(), shooter.getYRot() + Math.round(counter / 2.0) * 5 * opposite, 0.0F, velocity, 0.5f);
+            opposite = opposite * -1;
+            counter++;
             world.addFreshEntity(proj);
         }
     }
 
     @Override
-    public void onCast(ItemStack stack, LivingEntity shooter, Level world, SpellStats spellStats, SpellContext context, SpellResolver resolver) {
+    public CastResolveType onCast(ItemStack stack, LivingEntity shooter, Level world, SpellStats spellStats, SpellContext context, SpellResolver resolver) {
         summonProjectiles(world, shooter, spellStats, resolver);
-        resolver.expendMana(shooter);
+        return CastResolveType.SUCCESS;
     }
 
     /**
      * Cast by players
      */
     @Override
-    public void onCastOnBlock(UseOnContext context, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver) {
+    public CastResolveType onCastOnBlock(UseOnContext context, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver) {
         Level world = context.getLevel();
         Player shooter = context.getPlayer();
         summonProjectiles(world, shooter, spellStats, resolver);
-        resolver.expendMana(shooter);
+        return CastResolveType.SUCCESS;
     }
 
     /**
      * Cast by others.
      */
     @Override
-    public void onCastOnBlock(BlockHitResult blockRayTraceResult, LivingEntity caster, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver) {
+    public CastResolveType onCastOnBlock(BlockHitResult blockRayTraceResult, LivingEntity caster, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver) {
+        return CastResolveType.FAILURE;
     }
 
     @Override
-    public void onCastOnEntity(ItemStack stack, LivingEntity caster, Entity target, InteractionHand hand, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver) {
+    public CastResolveType onCastOnEntity(ItemStack stack, LivingEntity caster, Entity target, InteractionHand hand, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver) {
         onCast(stack, caster, caster.level, spellStats, spellContext, resolver);
-    }
-
-    @Override
-    public boolean wouldCastSuccessfully(@Nullable ItemStack stack, LivingEntity playerEntity, Level world, SpellStats spellStats, SpellResolver resolver) {
-        return false;
-    }
-
-    @Override
-    public boolean wouldCastOnBlockSuccessfully(UseOnContext context, SpellStats spellStats, SpellResolver resolver) {
-        return false;
-    }
-
-    @Override
-    public boolean wouldCastOnBlockSuccessfully(BlockHitResult blockRayTraceResult, LivingEntity caster, SpellStats spellStats, SpellResolver resolver) {
-        return false;
-    }
-
-    @Override
-    public boolean wouldCastOnEntitySuccessfully(@Nullable ItemStack stack, LivingEntity caster, Entity target, InteractionHand hand, SpellStats spellStats, SpellResolver resolver) {
-        return false;
+        return CastResolveType.SUCCESS;
     }
 
     @Override

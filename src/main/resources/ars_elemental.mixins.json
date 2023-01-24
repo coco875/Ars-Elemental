@@ -6,9 +6,17 @@
   "mixins": [
     "FlareMixin",
     "FoxInvoker",
+    "ItemEntityMixin",
     "LightningMixin",
+    "PotionBrewingMixin",
     "RitualAwakeningMixin",
     "ZombieInvoker"
   ],
-  "minVersion": "0.8"
+  "minVersion": "0.8",
+  "client": [
+    "GeoRenderAccessor",
+    "SpellBookMixin",
+    "SpellBookTextureMixin",
+    "StarbyDancerMixin"
+  ]
 }

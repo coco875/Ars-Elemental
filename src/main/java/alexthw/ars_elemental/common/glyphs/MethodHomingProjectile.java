@@ -1,16 +1,16 @@
 package alexthw.ars_elemental.common.glyphs;
 
 import alexthw.ars_elemental.common.entity.spells.EntityHomingProjectile;
-import alexthw.ars_elemental.util.CompatUtils;
-import alexthw.ars_elemental.util.TooManyCompats;
+import alexthw.ars_elemental.util.GlyphEffectUtil;
 import com.hollingsworth.arsnouveau.api.entity.ISummon;
 import com.hollingsworth.arsnouveau.api.spell.*;
+import alexthw.ars_elemental.api.spell.*;
 import com.hollingsworth.arsnouveau.common.entity.familiar.FamiliarEntity;
 import com.hollingsworth.arsnouveau.common.lib.GlyphLib;
 import com.hollingsworth.arsnouveau.common.spell.augment.*;
-import io.github.derringersmods.toomanyglyphs.common.glyphs.AbstractEffectFilter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -22,7 +22,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -40,17 +39,21 @@ public class MethodHomingProjectile extends AbstractCastMethod {
 
     public void summonProjectiles(Level world, LivingEntity shooter, SpellStats stats, SpellResolver resolver, List<Predicate<LivingEntity>> ignore) {
 
-        ArrayList<EntityHomingProjectile> projectiles = new ArrayList<>();
-        projectiles.add(new EntityHomingProjectile(world, resolver));
-        int numSplits = stats.getBuffCount(AugmentSplit.INSTANCE);
+        int numSplits = 1 + stats.getBuffCount(AugmentSplit.INSTANCE);
 
-        splits(world, shooter, shooter.blockPosition(), resolver, projectiles, numSplits);
-
+        List<EntityHomingProjectile> projectiles = new ArrayList<>();
+        for (int i = 0; i < numSplits; i++) {
+            EntityHomingProjectile spell = new EntityHomingProjectile(world, resolver);
+            projectiles.add(spell);
+        }
         float velocity = getProjectileSpeed(stats);
-
+        int opposite = -1;
+        int counter = 0;
         for (EntityHomingProjectile proj : projectiles) {
             proj.setIgnored(ignore);
-            proj.shoot(shooter, shooter.getXRot(), shooter.getYRot(), 0.0F, velocity, 0.8f);
+            proj.shoot(shooter, shooter.getXRot(), shooter.getYRot() + Math.round(counter / 2.0) * 5 * opposite, 0.0F, velocity, 0.8f);
+            opposite = opposite * -1;
+            counter++;
             world.addFreshEntity(proj);
         }
     }
@@ -79,7 +82,6 @@ public class MethodHomingProjectile extends AbstractCastMethod {
         if (shooter instanceof Player) {
             ignore.add(entity -> entity instanceof ISummon summon && shooter.getUUID().equals(summon.getOwnerID()));
             ignore.add(entity -> entity instanceof OwnableEntity pet && shooter.equals(pet.getOwner()));
-            resolver.expendMana(shooter);
         } else if (shooter instanceof ISummon summon && summon.getOwnerID() != null) {
             ignore.add(entity -> entity instanceof ISummon summon2 && summon.getOwnerID().equals(summon2.getOwnerID()));
             ignore.add(entity -> entity instanceof OwnableEntity pet && summon.getOwnerID().equals(pet.getOwnerUUID()));
@@ -101,7 +103,7 @@ public class MethodHomingProjectile extends AbstractCastMethod {
 
     /**
      * Cast by others.
-     */
+     * */
     @Override
     public void onCastOnBlock(BlockHitResult blockRayTraceResult, LivingEntity caster, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver) {
     }
@@ -109,26 +111,6 @@ public class MethodHomingProjectile extends AbstractCastMethod {
     @Override
     public void onCastOnEntity(ItemStack stack, LivingEntity caster, Entity target, InteractionHand hand, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver) {
         onCast(stack, caster, caster.level, spellStats, spellContext, resolver);
-    }
-
-    @Override
-    public boolean wouldCastSuccessfully(@Nullable ItemStack stack, LivingEntity playerEntity, Level world, SpellStats spellStats, SpellResolver resolver) {
-        return false;
-    }
-
-    @Override
-    public boolean wouldCastOnBlockSuccessfully(UseOnContext context, SpellStats spellStats, SpellResolver resolver) {
-        return false;
-    }
-
-    @Override
-    public boolean wouldCastOnBlockSuccessfully(BlockHitResult blockRayTraceResult, LivingEntity caster, SpellStats spellStats, SpellResolver resolver) {
-        return false;
-    }
-
-    @Override
-    public boolean wouldCastOnEntitySuccessfully(@Nullable ItemStack stack, LivingEntity caster, Entity target, InteractionHand hand, SpellStats spellStats, SpellResolver resolver) {
-        return false;
     }
 
     @Override
@@ -164,11 +146,9 @@ public class MethodHomingProjectile extends AbstractCastMethod {
         if (!targetPlayers) {
             ignore.add(entity -> entity instanceof Player);
         }
-        if (CompatUtils.tooManyGlyphsLoaded()) {
-            Set<AbstractEffectFilter> filters = TooManyCompats.getFilters(spell.recipe, 0);
-            if (!filters.isEmpty()){
-                ignore.add(entity -> !TooManyCompats.checkFilters(entity, filters));
-            }
+        Set<IFilter> filters = GlyphEffectUtil.getFilters(spell.recipe, 0);
+        if (!filters.isEmpty()){
+            ignore.add(entity -> GlyphEffectUtil.checkIgnoreFilters(entity, filters));
         }
         return ignore;
     }

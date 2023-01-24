@@ -55,5 +55,6 @@ public class DetectionRitual extends AbstractRitual {
         return ID;
     }
 
-    public static String ID = "ae_detection";
+    public static String ID = "ritual_detection";
+
 }

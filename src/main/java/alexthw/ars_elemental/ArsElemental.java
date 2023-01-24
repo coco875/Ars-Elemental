@@ -2,9 +2,7 @@ package alexthw.ars_elemental;
 
 import alexthw.ars_elemental.client.ClientEvents;
 import alexthw.ars_elemental.client.SpellFocusRenderer;
-import alexthw.ars_elemental.registry.ModItems;
-import alexthw.ars_elemental.registry.ModLoot;
-import alexthw.ars_elemental.registry.ModRegistry;
+import alexthw.ars_elemental.registry.*;
 import alexthw.ars_elemental.util.CompatUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
@@ -25,6 +23,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.jetbrains.annotations.NotNull;
+import top.theillusivec4.curios.Curios;
 import top.theillusivec4.curios.api.SlotTypeMessage;
 import top.theillusivec4.curios.api.client.CuriosRendererRegistry;
 
@@ -68,7 +67,7 @@ public class ArsElemental {
             modbus.addListener(this::doClientStuff);
             return new Object();
         });
-
+        ModAdvTriggers.init();
     }
 
     public static ResourceLocation prefix(String path) {
@@ -77,6 +76,7 @@ public class ArsElemental {
 
     public void setup(final FMLCommonSetupEvent event) {
         event.enqueueWork(() -> {
+            ModPotions.addPotionRecipes();
             ArsNouveauRegistry.postInit();
             CompatUtils.checkCompats();
         });
@@ -84,6 +84,7 @@ public class ArsElemental {
 
     @OnlyIn(Dist.CLIENT)
     private void doClientStuff(final FMLClientSetupEvent event) {
+        if (!ConfigHandler.Client.EnableSFRendering.get()) return;
         CuriosRendererRegistry.register(ModItems.FIRE_FOCUS.get(), SpellFocusRenderer::new);
         CuriosRendererRegistry.register(ModItems.WATER_FOCUS.get(), SpellFocusRenderer::new);
         CuriosRendererRegistry.register(ModItems.AIR_FOCUS.get(), SpellFocusRenderer::new);
@@ -92,14 +93,15 @@ public class ArsElemental {
     }
 
     public void sendImc(InterModEnqueueEvent evt) {
-        InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE, () -> new SlotTypeMessage.Builder("bundle").size(1).build());
+        InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE, () -> new SlotTypeMessage.Builder("bundle").size(1).icon(new ResourceLocation(Curios.MODID, "slot/empty_curio_slot")).build());
         InterModComms.sendTo("curios", SlotTypeMessage.REGISTER_TYPE, () -> new SlotTypeMessage.Builder("bangle").size(1).icon(BANGLE_SLOT).build());
-        InterModComms.sendTo("curios", SlotTypeMessage.MODIFY_TYPE, () -> new SlotTypeMessage.Builder("an_focus").size(1).icon(FOCUS_SLOT).cosmetic().build());
+        InterModComms.sendTo("curios", SlotTypeMessage.MODIFY_TYPE, () -> new SlotTypeMessage.Builder("an_focus").size(1).icon(FOCUS_SLOT).build());
     }
 
     public void loadComplete(FMLLoadCompleteEvent event) {
         event.enqueueWork(() -> {
             ComposterBlock.COMPOSTABLES.putIfAbsent(ModItems.FLASHING_SAPLING.get().asItem(), 0.3F);
+            ComposterBlock.COMPOSTABLES.putIfAbsent(ModItems.FLASHING_POD.get().asItem(), 0.3F);
         });
     }
 }

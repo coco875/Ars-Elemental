@@ -3,6 +3,7 @@ package alexthw.ars_elemental.common.items;
 import alexthw.ars_elemental.common.blocks.mermaid_block.MermaidTile;
 import alexthw.ars_elemental.common.entity.MermaidEntity;
 import alexthw.ars_elemental.registry.ModItems;
+import com.hollingsworth.arsnouveau.common.block.tile.SummoningTile;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.Item;
@@ -32,10 +33,11 @@ public class SirenCharm extends Item {
             MermaidEntity mermaid = new MermaidEntity(world, true);
             Vec3 vec = context.getClickLocation();
             mermaid.setPos(vec.x, vec.y, vec.z);
-            if (world.getBlockEntity(pos) instanceof MermaidTile) mermaid.setHome(pos);
+            mermaid.setHome(pos);
             world.addFreshEntity(mermaid);
-            context.getItemInHand().shrink(1);
+            return InteractionResult.SUCCESS;
         }
-        return InteractionResult.SUCCESS;
+        return InteractionResult.PASS;
     }
+
 }

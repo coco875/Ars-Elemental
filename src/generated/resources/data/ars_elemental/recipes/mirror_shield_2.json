@@ -2,7 +2,6 @@
   "type": "ars_nouveau:enchantment",
   "enchantment": "ars_elemental:mirror_shield",
   "level": 2,
-  "sourceCost": 6000,
   "pedestalItems": [
     {
       "item": {
@@ -26,8 +25,9 @@
     },
     {
       "item": {
-        "tag": "forge:storage_blocks/lapis"
+        "item": "ars_elemental:spell_mirror"
       }
     }
-  ]
+  ],
+  "sourceCost": 5000
 }

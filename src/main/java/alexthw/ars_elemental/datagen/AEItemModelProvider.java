@@ -1,7 +1,10 @@
 package alexthw.ars_elemental.datagen;
 
 import alexthw.ars_elemental.ArsElemental;
+import alexthw.ars_elemental.api.item.SpellPrismLens;
+import alexthw.ars_elemental.common.items.caster_tools.SpellHorn;
 import alexthw.ars_elemental.registry.ModItems;
+import alexthw.ars_elemental.common.blocks.ArchfruitPod;
 import com.hollingsworth.arsnouveau.common.block.StrippableLog;
 import com.hollingsworth.arsnouveau.common.items.AnimBlockItem;
 import net.minecraft.data.DataGenerator;
@@ -20,7 +23,6 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
-import software.bernie.ars_nouveau.geckolib3.core.IAnimatable;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -43,7 +45,9 @@ public class AEItemModelProvider extends ItemModelProvider {
         Set<RegistryObject<Item>> items = new HashSet<>(ModItems.ITEMS.getEntries());
 
         takeAll(items, i -> i.get() instanceof AnimBlockItem).forEach(this::blockItem);
-        takeAll(items, i -> i.get() instanceof IAnimatable);
+        takeAll(items, i -> i.get() instanceof SpellHorn);
+        takeAll(items, i -> i.get() instanceof SpellPrismLens);
+        takeAll(items, i -> i.get() instanceof BlockItem bi && bi.getBlock() instanceof ArchfruitPod).forEach(this::generatedItem);
         takeAll(items, i -> i.get() instanceof BlockItem bi && bi.getBlock() instanceof FenceBlock).forEach(this::fenceBlockItem);
         takeAll(items, i -> i.get() instanceof BlockItem bi && bi.getBlock() instanceof SaplingBlock).forEach(this::blockGeneratedItem);
         takeAll(items, i -> i.get() instanceof BlockItem).forEach(this::blockItem);

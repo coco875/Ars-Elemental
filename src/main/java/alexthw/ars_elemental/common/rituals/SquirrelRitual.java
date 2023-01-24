@@ -53,6 +53,6 @@ public class SquirrelRitual extends AbstractRitual {
         return ID;
     }
 
-    public static String ID = "ae_squirrels";
+    public static String ID = "ritual_squirrels";
 
 }

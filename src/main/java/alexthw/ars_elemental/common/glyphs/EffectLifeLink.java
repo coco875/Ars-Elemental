@@ -7,16 +7,14 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.common.ForgeConfigSpec;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
-import static alexthw.ars_elemental.registry.ModRegistry.LIFE_LINK;
+import static alexthw.ars_elemental.registry.ModPotions.LIFE_LINK;
 
-public class EffectLifeLink extends AbstractEffect {
+public class EffectLifeLink extends ElementalAbstractEffect implements IPotionEffect {
 
     public static EffectLifeLink INSTANCE = new EffectLifeLink();
 
@@ -25,19 +23,14 @@ public class EffectLifeLink extends AbstractEffect {
     }
 
     @Override
-    public void onResolveEntity(EntityHitResult rayTraceResult, Level world, @Nullable LivingEntity shooter, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver) {
+    public void onResolveEntity(EntityHitResult rayTraceResult, Level world, LivingEntity shooter, SpellStats spellStats, SpellContext spellContext, SpellResolver resolver) {
 
         if (rayTraceResult.getEntity() instanceof LivingEntity livingEntity && shooter instanceof Player player && player != livingEntity) {
 
-            applyConfigPotion(livingEntity, player, LIFE_LINK.get(), spellStats);
+            applyPotion(livingEntity, player, LIFE_LINK.get(), spellStats);
 
         }
 
-    }
-
-    @Override
-    public boolean wouldSucceed(HitResult rayTraceResult, Level world, LivingEntity shooter, SpellStats spellStats, SpellContext spellContext) {
-        return livingEntityHitSuccess(rayTraceResult);
     }
 
     @Override
@@ -62,14 +55,20 @@ public class EffectLifeLink extends AbstractEffect {
         return getSummonAugments();
     } //just time boosters
 
-    public void applyConfigPotion(LivingEntity entity, LivingEntity owner, MobEffect potionEffect, SpellStats spellStats){
-        applyPotion(entity, owner,  potionEffect, spellStats, POTION_TIME == null ? 30 : POTION_TIME.get(), EXTEND_TIME == null ? 8 : EXTEND_TIME.get(), true);
+    public void applyPotion(LivingEntity entity, LivingEntity owner, MobEffect potionEffect, SpellStats stats) {
+        if (entity == null || owner == null) return;
+        int ticks = getBaseDuration() * 20 + getExtendTimeDuration() * stats.getDurationInTicks();
+        entity.addEffect(new EntityCarryMEI(potionEffect, ticks, 0, false, true, owner, entity));
+        owner.addEffect(new EntityCarryMEI(potionEffect, ticks, 0, false, true, owner, entity));
     }
 
-    public void applyPotion(LivingEntity entity, LivingEntity owner, MobEffect potionEffect, SpellStats stats, int baseDurationSeconds, int durationBuffSeconds, boolean showParticles) {
-        if (entity == null || owner == null) return;
-        int ticks = baseDurationSeconds * 20 + durationBuffSeconds * stats.getDurationInTicks();
-        entity.addEffect(new EntityCarryMEI(potionEffect, ticks, 0, false, showParticles, owner, entity));
-        owner.addEffect(new EntityCarryMEI(potionEffect, ticks, 0, false, showParticles, owner, entity));
+    @Override
+    public int getBaseDuration() {
+        return POTION_TIME == null ? 30 : POTION_TIME.get();
+    }
+
+    @Override
+    public int getExtendTimeDuration() {
+        return EXTEND_TIME == null ? 8 : EXTEND_TIME.get();
     }
 }

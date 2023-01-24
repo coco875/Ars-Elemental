@@ -34,11 +34,11 @@ public class ConfigHandler {
 
         public static ForgeConfigSpec.IntValue SQUIRREL_REFRESH_RATE;
 
-        public static ForgeConfigSpec.IntValue SIREN_WEIGHT;
+        public static final Integer SIREN_WEIGHT = 2;
         public static ForgeConfigSpec.IntValue MAGES_WEIGHT;
         public static ForgeConfigSpec.BooleanValue MAGES_AGGRO;
 
-        public static ForgeConfigSpec.IntValue TREE_SPAWN_RATE;
+        public static final Integer TREE_SPAWN_RATE = 200;
 
 
         public Common(ForgeConfigSpec.Builder builder) {
@@ -46,13 +46,13 @@ public class ConfigHandler {
             FocusDiscount = builder.comment("Adjust this value to define how much the matching spell cost gets discounted by the focus")
                     .defineInRange("Elemental Focus discount", 0.15D, 0.0D, 0.99D);
 
-            builder.comment("Adjust these values to balance how much a spell gets amplified by the matching spell focus, halved for lesser focus")
+            builder.comment("Adjust these values to balance how much a spell gets amplified by the matching spell focus, doubled for major foci.")
                     .push("Elemental Spell Foci - Amplify");
 
-            FireMasteryBuff = builder.define("Fire Focus buff", 2.0D);
-            WaterMasteryBuff = builder.define("Water Focus buff", 2.0D);
-            AirMasteryBuff = builder.define("Air Focus buff", 2.0D);
-            EarthMasteryBuff = builder.define("Earth Focus buff", 2.0D);
+            FireMasteryBuff = builder.define("Fire Focus buff", 1.0D);
+            WaterMasteryBuff = builder.define("Water Focus buff", 1.0D);
+            AirMasteryBuff = builder.define("Air Focus buff", 1.0D);
+            EarthMasteryBuff = builder.define("Earth Focus buff", 1.0D);
 
             builder.pop();
 
@@ -67,7 +67,7 @@ public class ConfigHandler {
 
             builder.comment("Enable or disable the passive bonus of the foci").push("Elemental Spell Foci - Abilities");
 
-            EnableGlyphEmpowering = builder.define("Enable glyph empowering (ignite & freeze)", true);
+            EnableGlyphEmpowering = builder.define("Enable glyph empowering", true);
             EnableRegenBonus = builder.define("Enable regen bonus under special conditions", true);
 
             builder.pop();
@@ -82,12 +82,9 @@ public class ConfigHandler {
             builder.pop();
 
             builder.push("Spawn and Worldgen");
-            SIREN_WEIGHT = builder.comment("How often sirens spawn").defineInRange("sirenSpawnWeight", 3, 0, 200);
 
             MAGES_WEIGHT = builder.comment("How often mages spawn").defineInRange("magesSpawnWeight", 0, 0, 200);
             MAGES_AGGRO = builder.comment("If true, the wandering mages will target players too, unless they wear the focus of the same school.").define("magesAggro", true);
-
-            TREE_SPAWN_RATE = builder.comment("Rate of flashing archwood trees spawn per chunk. 0 disable, higher value -> more rare").defineInRange("flashingTreesRarity", 200, 0, Integer.MAX_VALUE);
 
             builder.pop();
 
@@ -104,11 +101,13 @@ public class ConfigHandler {
 
     public static class Client{
         public static ForgeConfigSpec.ConfigValue<Boolean> EnableSFRendering;
+        public static ForgeConfigSpec.ConfigValue<Boolean> NetheriteTexture;
 
         public Client(ForgeConfigSpec.Builder builder){
             builder.push("Visual Configs");
 
             EnableSFRendering = builder.comment("Enables the rendering of the spell focus while equipped").define("Enable SpellFocusRender", true);
+            NetheriteTexture = builder.comment("Enables the black texture of the spell book while upgraded").define("Enable BlackBookTexture", true);
 
             builder.pop();
         }

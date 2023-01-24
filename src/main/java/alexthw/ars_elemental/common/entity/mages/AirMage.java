@@ -40,18 +40,12 @@ public class AirMage extends EntityMageBase {
         pSpells.add(new Spell(MethodCurvedProjectile.INSTANCE, AugmentPierce.INSTANCE, AugmentPierce.INSTANCE, EffectLightning.INSTANCE));
     }
 
-    @Override
-    protected void registerGoals() {
-        super.registerGoals();
-
-    }
-
     public AirMage(Level level) {
         this(ModEntities.AIR_MAGE.get(), level);
     }
 
     @Override
-    protected void populateDefaultEquipmentSlots(@NotNull DifficultyInstance pDifficulty) {
+    protected void populateDefaultEquipmentSlots(DifficultyInstance pDifficulty) {
         super.populateDefaultEquipmentSlots(pDifficulty);
         ItemStack book = this.getItemInHand(InteractionHand.MAIN_HAND);
         book.getOrCreateTag().putInt("color", 4);

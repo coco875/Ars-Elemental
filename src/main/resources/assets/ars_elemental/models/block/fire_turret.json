@@ -1,10 +1,14 @@
 {
   "credit": "Made with Blockbench",
   "parent": "builtin/entity",
+  "render_type": "cutout",
   "texture_size": [
     32,
     32
   ],
+  "textures": {
+    "particle": "ars_elemental:block/fire_turret"
+  },
   "display": {
     "thirdperson_righthand": {
       "rotation": [

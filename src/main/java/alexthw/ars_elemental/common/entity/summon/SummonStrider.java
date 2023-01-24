@@ -114,7 +114,7 @@ public class SummonStrider extends Strider implements PlayerRideable, ISummon {
     private static final EntityDataAccessor<Optional<UUID>> OWNER_UUID = SynchedEntityData.defineId(SummonStrider.class, EntityDataSerializers.OPTIONAL_UUID);
 
     @Override
-    public int getExperienceReward(Player player) {
+    public int getExperienceReward() {
         return 0;
     }
 
@@ -129,9 +129,6 @@ public class SummonStrider extends Strider implements PlayerRideable, ISummon {
         super.tick();
         if (!level.isClientSide) {
             ticksLeft--;
-            if (ticksLeft <= 100 && ticksLeft % 2 == 0) {
-                ParticleUtil.spawnPoof((ServerLevel) level, blockPosition());
-            }
             if (ticksLeft <= 0) {
                 ParticleUtil.spawnPoof((ServerLevel) level, blockPosition());
                 this.remove(RemovalReason.DISCARDED);
@@ -213,10 +210,5 @@ public class SummonStrider extends Strider implements PlayerRideable, ISummon {
     @Override
     public boolean canFallInLove() {
         return false;
-    }
-
-    @Override
-    public boolean canBeControlledByRider() {
-        return true;
     }
 }
